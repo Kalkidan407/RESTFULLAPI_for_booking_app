@@ -10,34 +10,85 @@ import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+
 
 import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/bookings")
-@RequiredArgsConstructor
 public class BookingController {
 
-    private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
-    private final ServiceRepository serviceRepository;
+    private   BookingRepository bookingRepository;
+    private  UserRepository userRepository; 
+    private   ServiceRepository serviceRepository;
 
-    @PostMapping
-    public ResponseEntity<?> createBooking(@RequestBody BookingRequest request) {
+   @PostMapping()
+public ResponseEntity<Booking> createBooking(@RequestBody Booking bookingRequest) {
+ 
+    LocalDateTime dateTime = bookingRequest.getDateTime(); 
+
+    User user = userRepository.getById(null);
+    ServiceEntity service = serviceRepository.findById(bookingRequest.getId()).orElseThrow();
+   Booking request = bookingRepository.save(bookingRequest);
+
+
+
+    Booking booking = new Booking();
+    booking.setUser(user);
+    booking.setService(service);
+    booking.setDateTime(dateTime);
+
+    bookingRepository.save(booking);
+    return ResponseEntity.ok(booking);
+}
+
+    // GET: List all bookings
+    @GetMapping
+    public List<Booking> getAllBookings() {
+        return bookingRepository.findAll();
+    }
+
+    // GET: Get single booking by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getBookingById(@PathVariable Long id) {
+        return bookingRepository.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    // PUT: Update a booking
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateBooking(@PathVariable Long id, @RequestBody BookingRequest bookingRequest) {
+        Optional<Booking> existingBooking = bookingRepository.findById(id);
+        if (existingBooking.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<User> user = userRepository.findById(bookingRequest.getUserId());
+        Optional<ServiceEntity> service = serviceRepository.findById(bookingRequest.getServiceId());
+
+        if (user.isEmpty() || service.isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid user or service ID");
+        }
+
+        Booking booking = existingBooking.get();
+        booking.setUser(user.get());
+        booking.setService(service.get());
         
-        User user = userRepository.findById(request.getUserId()).orElseThrow();
-        ServiceEntity service = serviceRepository.findById(request.getServiceId()).orElseThrow();
-
-        Booking booking = new Booking();
-        booking.setUser(user);
-        booking.setService(service);
-        booking.setDateTime(request.getDateTime());
 
         return ResponseEntity.ok(bookingRepository.save(booking));
     }
 
-    @GetMapping
-    public List<Booking> getAll() {
-        return bookingRepository.findAll();
+    // DELETE: Delete a booking
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
+        if (!bookingRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        bookingRepository.deleteById(id);
+        return ResponseEntity.ok("Booking deleted");
     }
 }
