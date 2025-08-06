@@ -28,16 +28,7 @@ public class UserController {
     }
 
     
-    // @PutMapping("/{id}")
-    // public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User request){
 
-    //     User user =  userRepository.findById(id).orElseThrow();
-    //     user.setName(request.getName());
-    //     user.setEmail(request.getEmail());
-        
-
-    //     return ResponseEntity.ok(userRepository.save(user));
-    // }
 
 @PutMapping("/{id}")
 public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody User request) {
@@ -62,4 +53,27 @@ public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody Us
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
+
+     @DeleteMapping("/{id}")
+     public ResponseEntity<?> deleteUser( @PathVariable("id") Long id){
+        return userRepository.findById(id).map(user ->{
+            userRepository.delete(user);
+            return ResponseEntity.ok().build();
+        }).orElse(ResponseEntity.notFound().build());
+     }
+
+     @PatchMapping("/{id}")
+     public ResponseEntity<?> patchUser(@PathVariable("id") Long id, @RequestBody User request) {
+         return userRepository.findById(id)
+             .map(user -> {
+                 if (request.getName() != null) {
+                     user.setName(request.getName());
+                 }
+                 if (request.getEmail() != null) {
+                     user.setEmail(request.getEmail());
+                 }
+                 return ResponseEntity.ok(userRepository.save(user));
+             })
+             .orElse(ResponseEntity.notFound().build());
+     }
 }

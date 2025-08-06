@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/services")
 @RequiredArgsConstructor
+
 public class ServiceController {
     private final ServiceRepository serviceRepository;
 
@@ -26,5 +27,21 @@ public class ServiceController {
     @GetMapping
     public List<ServiceEntity> getAll() {
         return serviceRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getServiceIdEntities(@PathVariable("id") Long id) {
+        return serviceRepository.findById(id)
+         .map(ResponseEntity::ok)
+         .orElse(ResponseEntity.notFound().build());
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateService(@PathVariable("id") Long id, @RequestBody ServiceEntity request){
+        ServiceEntity service = serviceRepository.findById(id).orElseThrow();
+        service.setName(request.getName());
+        service.setPrice(request.getPrice());
+        return ResponseEntity.ok(serviceRepository.save(service));
     }
 }
