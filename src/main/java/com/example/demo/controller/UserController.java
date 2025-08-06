@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -30,16 +28,25 @@ public class UserController {
     }
 
     
-    @PutMapping("/users/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User request){
+    // @PutMapping("/{id}")
+    // public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User request){
 
-        User user =  userRepository.findById(id).orElseThrow();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setId(id);
+    //     User user =  userRepository.findById(id).orElseThrow();
+    //     user.setName(request.getName());
+    //     user.setEmail(request.getEmail());
+        
 
-        return ResponseEntity.ok(userRepository.save(user));
-    }
+    //     return ResponseEntity.ok(userRepository.save(user));
+    // }
+
+@PutMapping("/{id}")
+public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody User request) {
+    User user = userRepository.findById(id).orElseThrow();
+    user.setName(request.getName());
+    user.setEmail(request.getEmail());
+    return ResponseEntity.ok(userRepository.save(user));
+}
+
 
 
     @GetMapping
@@ -48,8 +55,8 @@ public class UserController {
     }
   
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<?> getUserId(@PathVariable Long id){
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserId(@PathVariable("id") Long id){
 
         return userRepository.findById(id)
             .map(ResponseEntity::ok)
