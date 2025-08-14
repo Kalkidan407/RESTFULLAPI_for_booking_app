@@ -11,5 +11,5 @@ public class ServiceEntity {
     private Long id;
 
     private String name;
-    private double price;
+    private Double price;
 }

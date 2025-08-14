@@ -6,10 +6,14 @@ package com.example.demo.controller;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.hateoas.EntityModel;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 
 
@@ -46,17 +50,37 @@ public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody Us
     }
   
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUserId(@PathVariable("id") Long id){
+    // @GetMapping("/{id}")
+    // public EntityModel<User> getUserId(@PathVariable("id") Long id){
 
-        return userRepository.findById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
-    }
+    //    return userRepository.findById(id).
+    //     map(user -> EntityModel.of(user,
+    //         linkTo(methodOn(UserController.class).getUserId(id)).withSelfRel(),
+    //         linkTo(methodOn(UserController.class).getAllUsers()).withRel("users")
+    //     ));
+     
+
+      
+
+    // }
+
+
+    @GetMapping("/{id}")
+public EntityModel<User> getUserId(@PathVariable Long id) {
+    User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+    return EntityModel.of(user,
+            linkTo(methodOn(UserController.class).getUserId(id)).withSelfRel(),
+            linkTo(methodOn(UserController.class).getAllUsers()).withRel("users")
+    );
+}
+
 
      @DeleteMapping("/{id}")
      public ResponseEntity<?> deleteUser( @PathVariable("id") Long id){
-        return userRepository.findById(id).map(user ->{
+        return userRepository.findById(id).map( 
+            user ->{
             userRepository.delete(user);
             return ResponseEntity.ok().build();
         }).orElse(ResponseEntity.notFound().build());
@@ -65,7 +89,8 @@ public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody Us
      @PatchMapping("/{id}")
      public ResponseEntity<?> patchUser(@PathVariable("id") Long id, @RequestBody User request) {
          return userRepository.findById(id)
-             .map(user -> {
+             .map( 
+                user -> {
                  if (request.getName() != null) {
                      user.setName(request.getName());
                  }

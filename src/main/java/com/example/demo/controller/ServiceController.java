@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 
 public class ServiceController {
+
+    private final BookingController bookingController;
     private final ServiceRepository serviceRepository;
 
     @PostMapping
@@ -26,6 +28,7 @@ public class ServiceController {
 
     @GetMapping
     public List<ServiceEntity> getAll() {
+        
         return serviceRepository.findAll();
     }
 
@@ -44,4 +47,32 @@ public class ServiceController {
         service.setPrice(request.getPrice());
         return ResponseEntity.ok(serviceRepository.save(service));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteService(@PathVariable("id") Long id) {
+        return serviceRepository.findById(id).map(
+            service -> {
+                serviceRepository.delete(service);
+                return ResponseEntity.noContent().build();
+            }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> patchServices(@PathVariable("id") Long id, @RequestBody ServiceEntity request) {
+        return serviceRepository.findById(id).map(
+            service -> {
+                if(request.getName() != null){
+                    service.setName(request.getName());
+                }
+                if(request.getPrice()  != null){
+                    service.setPrice(request.getPrice());
+                }
+                return ResponseEntity.ok(serviceRepository.save(service));
+            }).orElse(ResponseEntity.notFound().build());
+        
+    }
 }
+
+
+
+
