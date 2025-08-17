@@ -66,7 +66,7 @@ public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody Us
 
 
     @GetMapping("/{id}")
-public EntityModel<User> getUserId(@PathVariable Long id) {
+public EntityModel<User> getUserId(@PathVariable("id") Long id) {
     User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
