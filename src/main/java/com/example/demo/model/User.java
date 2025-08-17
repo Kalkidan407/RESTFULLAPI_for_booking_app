@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,4 +13,6 @@ public class User {
 
     private String name;
     private String email;
+    private String phone;
+    private String role; // CUSTOMER, DESIGNER, ADMIN
 }
