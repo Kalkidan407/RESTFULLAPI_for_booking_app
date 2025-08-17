@@ -5,7 +5,7 @@ import java.util.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.model.Service;
+import com.example.demo.model.ServiceEntity;
 import com.example.demo.repository.ServiceRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -21,13 +21,13 @@ public class ServiceController {
     private final ServiceRepository serviceRepository;
 
     @PostMapping
-    public ResponseEntity<Service> createService(@RequestBody Service service) {
-        Service saved = serviceRepository.save(service);
+    public ResponseEntity<ServiceEntity> createService(@RequestBody ServiceEntity service) {
+        ServiceEntity saved = serviceRepository.save(service);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @GetMapping
-    public List<Service> getAll() {
+    public List<ServiceEntity> getAll() {
         
         return serviceRepository.findAll();
     }
@@ -41,8 +41,8 @@ public class ServiceController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateService(@PathVariable("id") Long id, @RequestBody Service request){
-        Service service = serviceRepository.findById(id).orElseThrow();
+    public ResponseEntity<?> updateService(@PathVariable("id") Long id, @RequestBody ServiceEntity request){
+        ServiceEntity service = serviceRepository.findById(id).orElseThrow();
         service.setName(request.getName());
         service.setPrice(request.getPrice());
         return ResponseEntity.ok(serviceRepository.save(service));
@@ -58,7 +58,7 @@ public class ServiceController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> patchServices(@PathVariable("id") Long id, @RequestBody Service request) {
+    public ResponseEntity<?> patchServices(@PathVariable("id") Long id, @RequestBody ServiceEntity request) {
         return serviceRepository.findById(id).map(
             service -> {
                 if(request.getName() != null){

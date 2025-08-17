@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/bookings")
+@RequestMapping("/api/order")
 public class OrderController {
 
     private   OrderRepository bookingRepository;
