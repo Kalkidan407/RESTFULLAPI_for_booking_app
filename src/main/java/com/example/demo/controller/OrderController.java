@@ -1,10 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.BookingRequest;
-import com.example.demo.model.Booking;
-import com.example.demo.model.ServiceEntity;
+import com.example.demo.model.Order;
+import com.example.demo.model.Service;
 import com.example.demo.model.User;
-import com.example.demo.repository.BookingRepository;
+import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ServiceRepository;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,24 +19,24 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/bookings")
-public class BookingController {
+public class OrderController {
 
-    private   BookingRepository bookingRepository;
+    private   OrderRepository bookingRepository;
     private  UserRepository userRepository; 
     private   ServiceRepository serviceRepository;
 
    @PostMapping()
-public ResponseEntity<Booking> createBooking(@RequestBody Booking bookingRequest) {
+public ResponseEntity<Order> createBooking(@RequestBody Order bookingRequest) {
  
     LocalDateTime dateTime = bookingRequest.getDateTime(); 
 
     User user = userRepository.getById(null);
-    ServiceEntity service = serviceRepository.findById(bookingRequest.getId()).orElseThrow();
-   Booking request = bookingRepository.save(bookingRequest);
+    Service service = serviceRepository.findById(bookingRequest.getId()).orElseThrow();
+   Order request = bookingRepository.save(bookingRequest);
 
 
 
-    Booking booking = new Booking();
+    Order booking = new Order();
     booking.setUser(user);
     booking.setService(service);
     booking.setDateTime(dateTime);
@@ -47,7 +47,7 @@ public ResponseEntity<Booking> createBooking(@RequestBody Booking bookingRequest
 
     // GET: List all bookings
     @GetMapping
-    public List<Booking> getAllBookings() {
+    public List<Order> getAllBookings() {
         return bookingRepository.findAll();
     }
 
@@ -62,19 +62,19 @@ public ResponseEntity<Booking> createBooking(@RequestBody Booking bookingRequest
     // PUT: Update a booking
     @PutMapping("/{id}")
     public ResponseEntity<?> updateBooking(@PathVariable Long id, @RequestBody BookingRequest bookingRequest) {
-        Optional<Booking> existingBooking = bookingRepository.findById(id);
+        Optional<Order> existingBooking = bookingRepository.findById(id);
         if (existingBooking.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         Optional<User> user = userRepository.findById(bookingRequest.getUserId());
-        Optional<ServiceEntity> service = serviceRepository.findById(bookingRequest.getServiceId());
+        Optional<Service> service = serviceRepository.findById(bookingRequest.getServiceId());
 
         if (user.isEmpty() || service.isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid user or service ID");
         }
 
-        Booking booking = existingBooking.get();
+        Order booking = existingBooking.get();
         booking.setUser(user.get());
         booking.setService(service.get());
         

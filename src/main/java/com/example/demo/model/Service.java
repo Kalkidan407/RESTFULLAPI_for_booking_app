@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class ServiceEntity {
+public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
