@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 
 
 import java.util.List;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -27,8 +28,8 @@ public class OrderController {
 
    @PostMapping()
 public ResponseEntity<Order> createBooking(@RequestBody Order bookingRequest) {
- 
-    LocalDateTime dateTime = bookingRequest.getDateTime(); 
+
+    LocalDate date = bookingRequest.getOrderDate();
 
     User user = userRepository.getById(null);
     Service service = serviceRepository.findById(bookingRequest.getId()).orElseThrow();
@@ -39,7 +40,7 @@ public ResponseEntity<Order> createBooking(@RequestBody Order bookingRequest) {
     Order booking = new Order();
     booking.setUser(user);
     booking.setService(service);
-    booking.setDateTime(dateTime);
+    booking.setOrderDate(date);
 
     bookingRepository.save(booking);
     return ResponseEntity.ok(booking);
