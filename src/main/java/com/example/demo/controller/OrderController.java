@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.BookingRequest;
 import com.example.demo.model.Order;
-import com.example.demo.model.Service;
+import com.example.demo.model.ServiceEntity;
 import com.example.demo.model.User;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ServiceRepository;
@@ -32,7 +32,7 @@ public ResponseEntity<Order> createBooking(@RequestBody Order bookingRequest) {
     LocalDate date = bookingRequest.getOrderDate();
 
     User user = userRepository.getById(null);
-    Service service = serviceRepository.findById(bookingRequest.getId()).orElseThrow();
+    ServiceEntity service = serviceRepository.findById(bookingRequest.getId()).orElseThrow();
    Order request = bookingRepository.save(bookingRequest);
 
 
@@ -69,7 +69,7 @@ public ResponseEntity<Order> createBooking(@RequestBody Order bookingRequest) {
         }
 
         Optional<User> user = userRepository.findById(bookingRequest.getUserId());
-        Optional<Service> service = serviceRepository.findById(bookingRequest.getServiceId());
+        Optional<ServiceEntity> service = serviceRepository.findById(bookingRequest.getServiceId());
 
         if (user.isEmpty() || service.isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid user or service ID");

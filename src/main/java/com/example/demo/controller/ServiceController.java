@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 public class ServiceController {
 
-    private final OrderController bookingController;
+   // private final OrderController bookingController;
     private final ServiceRepository serviceRepository;
 
     @PostMapping
@@ -28,7 +28,6 @@ public class ServiceController {
 
     @GetMapping
     public List<ServiceEntity> getAll() {
-        
         return serviceRepository.findAll();
     }
 
@@ -45,6 +44,7 @@ public class ServiceController {
         ServiceEntity service = serviceRepository.findById(id).orElseThrow();
         service.setName(request.getName());
         service.setPrice(request.getPrice());
+        service.setDescription(request.getDescription());
         return ResponseEntity.ok(serviceRepository.save(service));
     }
 

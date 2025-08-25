@@ -24,6 +24,6 @@ public class Payment {
     private Order order;
 
     private Double amount;
-    private String paymentMethod; // CREDIT_CARD, PAYPAL, etc.
+    private String paymentMethod; 
     private LocalDate paymentDate;
 }
