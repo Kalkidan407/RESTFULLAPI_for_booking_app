@@ -70,7 +70,8 @@ public EntityModel<User> getUserId(@PathVariable("id") Long id) {
     User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-    return EntityModel.of(user,
+    return EntityModel.of(
+        user,
             linkTo(methodOn(UserController.class).getUserId(id)).withSelfRel(),
             linkTo(methodOn(UserController.class).getAllUsers()).withRel("users")
     );
