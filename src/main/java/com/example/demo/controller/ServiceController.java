@@ -1,5 +1,12 @@
 package com.example.demo.controller;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.*;
+
+import javax.swing.text.html.parser.Entity;
+
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,16 +33,23 @@ public class ServiceController {
 
     @GetMapping
     public List<Service> getAll() {
-        
         return serviceRepository.findAll();
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> getServiceIdEntities(@PathVariable("id") Long id) {
-        return serviceRepository.findById(id)
-         .map(ResponseEntity::ok)
-         .orElse(ResponseEntity.notFound().build());
-    }
+    public  EntityModel<Service> getServiceIdEntities(@PathVariable("id") Long id) {
+         Service services =  serviceRepository.findById(id)
+                       .orElseThrow(() -> new RuntimeException("Sevices not found with id:" + id) );
+    
+           return EntityModel.of(
+            services,
+           
+           linkTo(methodOn(ServiceController.class).getServiceIdEntities(id)).withSelfRel(),
+          linkTo(methodOn(ServiceController.class).getAll()).withRel("services")
+           
+           );
+      }
 
 
     @PutMapping("/{id}")
